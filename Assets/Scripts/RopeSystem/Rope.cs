@@ -131,12 +131,12 @@ namespace RopeSystem
                 lineRenderer.positionCount = linePoints + 1;
             targetValue = GetMidPoint();
             var value = currentValue;
-            if (midPoint != null)
+            if (midPoint)
                 midPoint.position = GetRationalBezierPoint(startPoint.position, value,
                     endPoint.position, midPointPosition, 1f, midPointWeight, 1f);
             for (var index = 0; index < linePoints; ++index)
             {
-                Vector3 rationalBezierPoint = GetRationalBezierPoint(startPoint.position, value,
+                var rationalBezierPoint = GetRationalBezierPoint(startPoint.position, value,
                     endPoint.position, index / (float)linePoints, 1f, midPointWeight, 1f);
                 lineRenderer.SetPosition(index, rationalBezierPoint);
             }
@@ -161,7 +161,7 @@ namespace RopeSystem
             return point;
         }
 
-        private Vector3 GetRationalBezierPoint(
+        private static Vector3 GetRationalBezierPoint(
             Vector3 p0,
             Vector3 p1,
             Vector3 p2,
@@ -180,6 +180,11 @@ namespace RopeSystem
             return (vector3_1 * (float)num2 + vector3_2 * (2f * (1f - t) * t) + vector3_3 * Mathf.Pow(t, 2f)) / num1;
         }
 
+        /// <summary>
+        /// 获得位于 (总长 * t) 位置的采样点
+        /// </summary>
+        /// <param name="t">浮点值(0 - 1)，表示相对位置</param>
+        /// <returns>采样点的世界坐标</returns>
         public Vector3 GetPointAt(float t)
         {
             if (ArePointsValid())
@@ -220,6 +225,11 @@ namespace RopeSystem
             GetMidPoint();
         }
 
+        /// <summary>
+        /// 设置绳子的起点
+        /// </summary>
+        /// <param name="newStartPoint">起点Transform组件</param>
+        /// <param name="instantAssign">立即重新分配计算绳子采样点，默认为false</param>
         public void SetStartPoint(Transform newStartPoint, bool instantAssign = false)
         {
             startPoint = newStartPoint;
@@ -231,6 +241,11 @@ namespace RopeSystem
             NotifyPointsChanged();
         }
 
+        /// <summary>
+        /// 设置绳子的中间点
+        /// </summary>
+        /// <param name="newMidPoint">中间点Transform组件</param>
+        /// <param name="instantAssign">立即重新分配计算绳子采样点，默认为false</param>
         public void SetMidPoint(Transform newMidPoint, bool instantAssign = false)
         {
             midPoint = newMidPoint;
@@ -242,6 +257,11 @@ namespace RopeSystem
             NotifyPointsChanged();
         }
 
+        /// <summary>
+        /// 设置绳子的终点
+        /// </summary>
+        /// <param name="newEndPoint">终点Transform组件</param>
+        /// <param name="instantAssign">立即重新分配计算绳子采样点，默认为false</param>
         public void SetEndPoint(Transform newEndPoint, bool instantAssign = false)
         {
             endPoint = newEndPoint;
@@ -253,6 +273,9 @@ namespace RopeSystem
             NotifyPointsChanged();
         }
 
+        /// <summary>
+        /// 重新计算绳子采样点，并设置到LineRenderer上
+        /// </summary>
         public void RecalculateRope()
         {
             if (!ArePointsValid())
